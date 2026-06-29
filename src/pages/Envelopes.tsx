@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useStore } from '../store/useStore';
-import { Plus, Target, Calendar, TrendingUp, AlertTriangle } from 'lucide-react';
+import { Plus, Target, Calendar, TrendingUp, AlertTriangle, Crown } from 'lucide-react';
 
 function SinkingFundRing({ current, target, color }: { current: number; target: number; color: string }) {
   const radius = 36;
@@ -89,6 +89,7 @@ function calculateRequiredMonthly(target: number, current: number, targetDate: s
 export default function Envelopes() {
   const envelopes = useStore((s) => s.envelopes);
   const transactions = useStore((s) => s.transactions);
+  const profile = useStore((s) => s.profile);
   const [filter, setFilter] = useState<'all' | 'standard' | 'sinking'>('all');
 
   const standardEnvelopes = envelopes.filter((e) => !e.isSinkingFund);
@@ -228,16 +229,33 @@ export default function Envelopes() {
           </div>
         ))}
 
-        {/* Add Envelope Card */}
-        <div className="bg-white rounded-2xl border-2 border-dashed border-slate-200 p-5 flex flex-col items-center justify-center min-h-[200px] cursor-pointer hover:border-emerald-400 hover:bg-emerald-50/30 transition-all group">
-          <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
-            <Plus className="w-6 h-6 text-slate-400 group-hover:text-emerald-500" />
+        {/* Add Envelope Card — Premium Gated */}
+        {profile.isPremium || envelopes.length < 3 ? (
+          <div className="bg-white rounded-2xl border-2 border-dashed border-slate-200 p-5 flex flex-col items-center justify-center min-h-[200px] cursor-pointer hover:border-emerald-400 hover:bg-emerald-50/30 transition-all group">
+            <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
+              <Plus className="w-6 h-6 text-slate-400 group-hover:text-emerald-500" />
+            </div>
+            <p className="text-sm font-medium text-slate-500 mt-3 group-hover:text-emerald-600">
+              Add New Envelope
+            </p>
+            <p className="text-xs text-slate-400 mt-1">Create a new budget category</p>
           </div>
-          <p className="text-sm font-medium text-slate-500 mt-3 group-hover:text-emerald-600">
-            Add New Envelope
-          </p>
-          <p className="text-xs text-slate-400 mt-1">Create a new budget category</p>
-        </div>
+        ) : (
+          <div className="bg-white rounded-2xl border-2 border-dashed border-amber-200 p-5 flex flex-col items-center justify-center min-h-[200px] bg-amber-50/30">
+            <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center">
+              <Crown className="w-6 h-6 text-amber-500" />
+            </div>
+            <p className="text-sm font-semibold text-amber-700 mt-3">
+              Upgrade to Premium
+            </p>
+            <p className="text-xs text-amber-600 text-center mt-1">
+              Free tier limited to 3 envelopes.<br />Unlock unlimited envelopes with Premium!
+            </p>
+            <button className="mt-3 bg-gradient-to-r from-amber-400 to-yellow-500 text-white text-xs font-bold px-4 py-2 rounded-lg hover:from-amber-500 hover:to-yellow-600 transition-all shadow-sm">
+              UPGRADE TO PRO — $4.99/mo
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Envelope Detail Modal */}

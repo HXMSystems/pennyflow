@@ -1,11 +1,13 @@
 import { useState, useMemo } from 'react';
 import { useStore } from '../store/useStore';
+import { Plus, Trash2, BarChart3, Crown, TrendingDown } from 'lucide-react';
 import { Plus, Trash2, BarChart3, Play, TrendingDown, Calendar } from 'lucide-react';
 import { runFullComparison, type Strategy } from '../services/debtSimulation';
 import PayoffChart, { StrategyLegend } from '../components/PayoffChart';
 
 export default function DebtTracker() {
   const debts = useStore((s) => s.debts);
+  const profile = useStore((s) => s.profile);
   const addDebt = useStore((s) => s.addDebt);
   const deleteDebt = useStore((s) => s.deleteDebt);
 
@@ -110,6 +112,35 @@ export default function DebtTracker() {
         </div>
       </div>
 
+      {/* Premium Gate: Simulation Upsell for Free Users */}
+      {!profile.isPremium && (
+        <div className="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-2xl border border-amber-200 p-6">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-amber-100 flex items-center justify-center flex-shrink-0">
+              <Crown className="w-6 h-6 text-amber-500" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-bold text-amber-900 text-lg">Unlock Debt Payoff Simulator</h3>
+              <p className="text-sm text-amber-700 mt-1">
+                Compare <strong>Snowball</strong> (lowest balance first) vs <strong>Avalanche</strong> (highest interest first) strategies with interactive SVG payoff curves, debt-free date predictions, and interest savings calculations.
+              </p>
+              <button className="mt-3 bg-gradient-to-r from-amber-400 to-yellow-500 text-white font-bold px-5 py-2.5 rounded-xl text-sm hover:from-amber-500 hover:to-yellow-600 transition-all shadow-sm">
+                UPGRADE TO PREMIUM — $4.99/mo
+              </button>
+            </div>
+            <div className="hidden md:flex items-center gap-3 text-xs text-amber-600">
+              <TrendingDown className="w-8 h-8 opacity-40" />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Debt Cards */}
+      <div className="space-y-3">
+        {debts.map((debt) => (
+          <div
+            key={debt.id}
+            className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5"
       {/* Simulation Controls */}
       <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
         <div className="flex items-center gap-2 mb-4">
